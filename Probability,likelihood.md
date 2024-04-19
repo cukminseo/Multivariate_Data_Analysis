@@ -45,7 +45,7 @@ Probability는 베이즈 통계에서 주로 갱신된다. 베이즈 정리를 �
 
 ### Likelihood 갱신
 Likelihood는 특정 모델 또는 파라미터에 대한 데이터의 지지도를 나타내며, 직접적인 확률 값이 아니다. 새로운 데이터가 관찰될 때마다 Likelihood는 계산되어 해당 모델 또는 파라미터 설정이 얼마나 잘 데이터를 설명하는지를 평가한다. 그러나 Likelihood 자체는 "갱신"되지 않는다. 대신, 새로운 데이터가 추가될 때마다 새로운 Likelihood 값이 계산되어 모델의 적합도를 다시 평가할 수 있다.
-
+ 
 ### 결론
 따라서, Probability는 새로운 정보를 받을 때마다 베이즈적 방식으로 갱신된다. 반면, Likelihood는 새로운 데이터가 주어질 때마다 다시 계산되어 모델 또는 파라미터의 적합도를 평가한다. Likelihood 자체는 이전 값에 대한 업데이트가 아니라 각 데이터 세트에 대해 새로 계산되는 값이다.
 # PDF:Probability Density Function(확률밀도함수)
@@ -73,3 +73,100 @@ $\log L(\theta \mid X) = \sum_{i=1}^n \log P(x_i \mid \theta)$
 
 ### 예시
 정규 분포의 경우, 평균 $\mu$와 분산 $\sigma^2$를 파라미터로 가지며, MLE를 사용하여 이 파라미터들을 추정할 수 있다. 이 때, 관측된 데이터의 평균을 최적의 $\mu$로, 데이터의 분산을 최적의 $\sigma^2$로 설정하는 것이 일반적인 결과이다.
+
+# 코드 구현
+
+### MLE 계산
+정규 분포 아래에서 관측치의 우도(Likelihood)를 계산하는 방법을 알아보자. 정규 분포는 평균 $\mu$와 표준편차 $\sigma$로 정의된다. 이 분포를 사용하여 단일 관측치의 우도를 계산하는 방법은 다음과 같다.
+
+#### 1단계: 지수(exponent) 계산
+- 관측값 $x$와 평균 $\mu$ 사이의 차이를 계산한다.
+- 이 차이를 제곱한 다음, 2와 $\sigma^2$로 나눈다.
+- 이 결과에 음수를 취합니다.
+
+$\text{exponent} = -\frac{(x - \mu)^2}{2\sigma^2}$
+
+#### 2단계: 우도 업데이트
+- 계산된 지수를 사용하여 우도를 업데이트한다. 정규 분포의 확률 밀도 함수(PDF) 공식을 사용한다.
+
+$f(x \mid \mu, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\text{exponent}}$
+- 여기서 $\frac{1}{\sqrt{2\pi\sigma^2}}$는 정규화 상수로, 모든 확률의 합이 1이 되도록 보장한다.
+
+따라서, 특정 관측값 $x$의 우도는 평균 $\mu$와 표준편차 $\sigma$가 주어진 정규 분포에서 위의 식을 사용하여 계산된다. 이 우도 값은 그 관측치가 주어진 $\mu$와 $\sigma$를 가진 정규 분포에서 얼마나 일반적인지, 또는 얼마나 이례적인지를 수치적으로 나타낸다.
+
+이 계산법은 최대 우도 추정(MLE)에서 중요한 단계이다. 데이터 집합 전체에 대한 우도를 최대화하는 $\mu$와 $\sigma$ 값을 찾기 위해 사용된다. 각 관측치에 대해 우도를 계산하고, 이들을 곱하여 전체 데이터 세트의 우도를 얻으며, 이를 최대화하는 파라미터를 찾는다.
+
+### 전체 코드
+
+```python
+import math
+##### Sample Dataset (10) #####
+measurements = [2.1, 2.2, 2.0, 2.3, 2.1, 2.2, 2.1, 2.4, 2.3, 2.2]
+##### Function: :Likelihood calculation #####
+def calculate_likelihood(data, mu, sigma):
+    likelihood = 1.0
+    for measurement in data:
+        exponent = -(measurement-mu)**2/(2*sigma**2)
+        likelihood *= (1/(sigma*math.sqrt(2*math.pi)))*math.exp(exponent)
+    return likelihood
+```
+
+```python
+### 1. Calculate the likelihood ###
+print("### 1. Calculate the likelihood ###")
+# 모수의 평균을 2.2라고 가정한 값
+mean = 2.2
+# 표준편차 역시 가정한 값
+std_dev = 0.1
+# 계산
+likelihood = calculate_likelihood(measurements, mean, std_dev)
+# 만일 mean이 2.2이고 std_dev이 0.1일 likelyhood
+print("Likelihood:", likelihood)
+```
+
+```python
+### 2. Calculate the likelihoods by changing mean values ###
+print("### 2. Calculate the likelihoods by changing mean values ###")
+# 직관을 위해 가정 값을 여러개 두자
+mean_list = [2.0, 2.1, 2.2, 2.3, 2.4]
+std_dev = 0.1
+# 계산
+for mean in mean_list:
+    likelihood = calculate_likelihood(measurements, mean, std_dev)
+    # 각각의 평균과 편차에 대한 likelyhood 
+    print(f"Mean: {mean}, Likelihood: {likelihood}")
+```
+
+```python
+### 3. Calculate the likelihoods by changing both mean and std values ###
+print("### 3. Calculate the likelihoods by changing both mean and std values ###")
+# 두개를 다 돌려보자
+mean_list = [2.0, 2.1, 2.2, 2.3, 2.4]
+std_dev_list = [0.1, 0.2, 0.3, 0.4, 0.5]
+# Calculate the likelihoods by changing both mean and std values
+for mean in mean_list:
+    for std_dev in std_dev_list:
+        likelihood = calculate_likelihood(measurements, mean, std_dev)
+        # 각각의 평균과 편차에 대한 likelyhood 
+        print(f"Mean: {mean}, std:{std_dev}, Likelihood: {likelihood}")
+```
+
+```python
+import numpy as np
+### 4. Maximum likelihood estimation ###
+print("### 4. Maximum likelihood estimation ###")
+max_likelihood = -99
+for mean in np.arange(2, 3, 0.001):
+    for std in np.arange(0.1, 0.5, 0.001):
+        likelihood = calculate_likelihood(measurements, mean, std)
+        if max_likelihood < likelihood:
+            max_likelihood = likelihood
+            best_mean = mean
+            best_std_dev = std
+
+print("Maximum Likelihood Estimation:")
+print(f"Best Mean: {best_mean}")
+print(f"Best Standard Deviation: {best_std_dev}")
+print(f"Max Likelihood: {max_likelihood}")
+```
+
