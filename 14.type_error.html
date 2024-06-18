@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Type I and Type II errors</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="type-i-and-type-ii-errors">Type I and Type II errors</h1>
+<p>제1종 오류와 제2종 오류는 가설 검정과 통계에서 중요한 개념이다.
+제1종 오류와 제2종 오류를 이해하는 것은 실험 설계와 결과 해석에 있어 중요하다.
+연구자들은 자신이 연구하는 특정 분야의 맥락에 따라 거짓 양성과 거짓 음성의 위험을 균형 있게 조절하여 연구하여야 한다.
+<img src="https://velog.velcdn.com/images/kms39273/post/962e6f98-2031-4ecc-95bf-702786959278/image.png" alt=""></p>
+<h1 id="type-i-error">Type I error</h1>
+<ul>
+<li>
+<p>정의: 제1종 오류는 귀무 가설(H0)이 참일 때, 이를 잘못 기각하는 오류이다. 이는 &quot;false positive&quot; or &quot;alpha error&quot;라고도 한다.</p>
+</li>
+<li>
+<p>유의 수준 (α): 제1종 오류를 범할 확률은 α로 표시한다. 이 값은 테스트 전에 선택되며 귀무 가설을 기각하는 임계값을 나타낸다. 일반적인 α 값은 0.05, 0.01, 또는 0.10이다.</p>
+</li>
+<li>
+<p>예시: 의료 테스트</p>
+</li>
+<li>
+<p>시나리오: 새로운 질병 진단 테스트.</p>
+</li>
+<li>
+<p>귀무 가설 (H0): 환자는 질병이 없다.</p>
+</li>
+<li>
+<p>대립 가설 (H1): 환자는 질병이 있다.</p>
+</li>
+<li>
+<p>제1종 오류: 테스트 결과 환자가 질병이 있다고 나타났지만, 실제로는 그렇지 않은 경우이다. 이는 불필요한 치료로 이어질 수 있으며, 환자에게 스트레스와 잠재적인 부작용을 초래할 수 있다.</p>
+</li>
+<li>
+<p>결과: 불필요한 치료, 스트레스, 의료 비용.</p>
+</li>
+</ul>
+<h1 id="type-ii-error">Type II error</h1>
+<ul>
+<li>
+<p>정의: 제2종 오류는 귀무 가설(H0)이 거짓일 때, 이를 기각하지 못하는 오류이다. 이는 &quot;거짓 음성&quot; 또는 &quot;베타 오류&quot;라고도 한다.</p>
+</li>
+<li>
+<p>power of the test (1 - β): 제2종 오류를 범하지 않을 확률을 power of the test이라고 한다. 제2종 오류를 범할 확률은 β로 표시된다.</p>
+</li>
+<li>
+<p>예시: 의료 테스트</p>
+</li>
+<li>
+<p>시나리오: 새로운 질병 진단 테스트.</p>
+</li>
+<li>
+<p>귀무 가설 (H0): 환자는 질병이 없다.</p>
+</li>
+<li>
+<p>대립 가설 (H1): 환자는 질병이 있다.</p>
+</li>
+<li>
+<p>제2종 오류: 테스트 결과 환자가 질병이 없다고 나타났지만, 실제로는 질병이 있는 경우이다. 이는 환자가 필요한 치료를 받지 못해 상태가 악화될 수 있다.</p>
+</li>
+<li>
+<p>결과: 오진, 필요한 치료의 부족, 건강 상태 악화.</p>
+</li>
+</ul>
+<h1 id="example-of-type-i-a-ii-errors-in-a-fire-alarm-system">Example of Type I a&amp; II Errors in a Fire Alarm System</h1>
+<p>Type I a&amp; II Errors를 설명하는데 종종 사용되는 예시인 화재경보시스템 예시이다.</p>
+<h2 id="type-i-error-false-positive">Type I Error (False Positive)</h2>
+<ul>
+<li>정의: 제1종 오류는 화재 경보 시스템이 화재가 없을 때(귀무 가설이 참일 때) 화재가 발생했다고 신호를 보내는 경우(귀무 가설을 기각하는 경우)</li>
+<li>유의 수준 (α): 거짓 양성(제1종 오류)의 확률은 α로 표시된다.</li>
+<li><strong>예제</strong>:
+<ul>
+<li><strong>시나리오</strong>: 건물에 화재 경보 시스템이 설치되어 있다.</li>
+<li><strong>귀무 가설 (H0)</strong>: 건물에 화재가 없다.</li>
+<li><strong>대립 가설 (H1)</strong>: 건물에 화재가 있다.</li>
+<li><strong>제1종 오류</strong>: 실제로 화재가 없는데 화재 경보가 울리는 경우이다. 이는 요리 중 연기, 샤워에서 나오는 증기, 경보 시스템의 오작동 등으로 인해 발생할 수 있다.</li>
+</ul>
+</li>
+<li><strong>결과</strong>:
+<ul>
+<li>건물 대피.</li>
+<li>활동의 방해 가능성.</li>
+<li>불필요한 공황.</li>
+<li>소방서 호출과 같은 거짓 경보와 관련된 잠재적 비용.</li>
+</ul>
+</li>
+</ul>
+<h2 id="type-ii-error-false-negative">Type II Error (False Negative)</h2>
+<ul>
+<li>정의: 제2종 오류는 화재 경보 시스템이 화재가 있을 때(귀무 가설을 기각하지 못할 때) 화재를 알리지 못하는 경우를 의미한다(귀무 가설이 거짓임).</li>
+<li>power of the test (1 - β): 화재가 있을 때 이를 올바르게 감지할 확률을 power of the test이라고 하며, 거짓 음성(제2종 오류)의 확률은 β로 표시된다.</li>
+<li><strong>예제</strong>:
+<ul>
+<li><strong>시나리오</strong>: 건물에 화재 경보 시스템이 설치되어 있다.</li>
+<li><strong>귀무 가설 (H0)</strong>: 건물에 화재가 없다.</li>
+<li><strong>대립 가설 (H1)</strong>: 건물에 화재가 있다.</li>
+<li><strong>제2종 오류</strong>: 실제로 화재가 있는데도 화재 경보가 울리지 않는 경우이다. 이는 경보 시스템의 배터리 방전이나 센서의 결함 등으로 인해 발생할 수 있다.</li>
+</ul>
+</li>
+<li><strong>결과</strong>:
+<ul>
+<li>화재가 확산되어 건물에 심각한 손상을 입히고 생명의 손실을 초래할 수 있다.</li>
+<li>대피가 지연되어 거주자의 위험이 증가한다.</li>
+<li>재산 손상 및 잠재적인 법적 책임으로 인해 비용이 증가한다.</li>
+</ul>
+</li>
+</ul>
+<h1 id="type-i-and-type-ii-errors-정리">Type I and Type II Errors 정리</h1>
+<ul>
+<li><strong>제1종 오류와 제2종 오류는 서로 반비례 관계에 있다.</strong> 즉, 한 유형의 오류 확률을 줄이면 다른 유형의 오류 확률이 증가하는 경우가 많다. 이 관계는 가설 검정의 근본적인 측면이며, 유의 수준(α), 검정력(power of the test;1 - β), 표본 크기, 그리고 실제 효과 크기에 의해 영향을 받는다.</li>
+</ul>
+<p><strong>제1종 오류 (거짓 양성)</strong></p>
+<ul>
+<li><strong>정의</strong>: 귀무 가설(H0)이 참일 때, 이를 잘못 기각하는 경우이다.</li>
+<li><strong>확률 (α)</strong>: 유의 수준으로, 제1종 오류를 범할 확률이다. 연구자들은 테스트를 수행하기 전에 이 값을 설정한다 (일반적으로 0.05, 0.01 등).</li>
+</ul>
+<p><strong>제2종 오류 (거짓 음성)</strong></p>
+<ul>
+<li><strong>정의</strong>: 귀무 가설(H0)이 거짓일 때, 이를 기각하지 않는 경우이다.</li>
+<li><strong>확률 (β)</strong>: 제2종 오류를 범할 확률이다. 검정력(power of the test;1 - β)은 거짓 귀무 가설을 올바르게 기각할 확률이다.</li>
+</ul>
+<h2 id="trade-off-between-type-i-and-type-ii-errors">Trade-off Between Type I and Type II Errors</h2>
+<ol>
+<li>유의 수준 (α)와 검정력 (1 - β):</li>
+</ol>
+<ul>
+<li>유의 수준(α)을 낮추어(까다롭게 하여) 제1종 오류의 확률을 줄이면 테스트가 더 엄격해져 실제 효과를 감지하기 어려워지므로 제2종 오류(β)의 확률이 증가할 수 있다.</li>
+<li>반대로, α를 높이면 β가 줄어들어 검정력이 증가하지만 제1종 오류의 위험도 증가한다.</li>
+</ul>
+<ol start="2">
+<li>표본 크기:</li>
+</ol>
+<ul>
+<li>표본 크기를 늘리면 α와 β가 모두 줄어들어 실제 효과를 감지할 수 있는 검정의 능력이 향상되고 제1종 오류와 제2종 오류의 발생 가능성이 줄어든다.</li>
+<li>더 큰 표본은 모집단에 대한 더 많은 정보를 제공하여 귀무 가설과 대립 가설을 구분하기 쉽게 만든다.</li>
+</ul>
+<ol start="3">
+<li>효과 크기:</li>
+</ol>
+<ul>
+<li>효과 크기가 클수록(모집단 간의 실제 차이) 실제 효과를 감지하기 쉬워져 β가 줄어든다.</li>
+<li>효과 크기가 작으면 β가 높아져 실제 차이를 감지하기 어려워지고, 제2종 오류가 증가할 수 있다.</li>
+</ul>
+<h2 id="practical-example-medical-testing">Practical Example: Medical Testing</h2>
+<ul>
+<li>시나리오: 새로운 질병 진단 테스트가 평가되고 있다.</li>
+<li>귀무 가설 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">H_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>): 환자가 질병이 없다.</li>
+<li>대립 가설 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">H_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0813em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>): 환자가 질병이 있다.</li>
+<li><strong>제1종 오류 (거짓 양성)</strong>:
+<ul>
+<li>테스트가 환자가 질병이 있다고 나타내지만 실제로는 그렇지 않은 경우.</li>
+<li>결과: 불필요한 치료, 증가된 의료 비용, 환자의 불안.</li>
+</ul>
+</li>
+<li><strong>제2종 오류 (거짓 음성)</strong>:
+<ul>
+<li>테스트가 환자가 질병이 없다고 나타내지만 실제로는 질병이 있는 경우.</li>
+<li>결과: 진단 누락, 치료 부족, 질병의 진행.</li>
+</ul>
+</li>
+</ul>
+<h3 id="의료-테스트에서-오류의-균형-맞추기">의료 테스트에서 오류의 균형 맞추기</h3>
+<ul>
+<li>의료 테스트에서 제1종 오류와 제2종 오류 간의 균형은 질병의 심각성과 잘못된 진단의 결과에 따라 달라진다.</li>
+<li><strong>제1종 오류의 위험이 높은 경우</strong>:
+<ul>
+<li>더 엄격한 기준 (낮은 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span>).</li>
+<li>거짓 양성이 거짓 음성보다 덜 해로울 때 수용 가능.</li>
+<li>예: 심각하지만 치료 가능한 질병의 선별 검사.</li>
+</ul>
+</li>
+<li><strong>제2종 오류의 위험이 높은 경우</strong>:
+<ul>
+<li>더 관대한 기준 (높은 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span>).</li>
+<li>진단 누락이 더 해로울 때 수용 가능.</li>
+<li>예: 거짓 음성의 비용이 매우 높은 확인 검사.</li>
+</ul>
+</li>
+</ul>
+<h1 id="summary">Summary</h1>
+<p>제1종 오류와 제2종 오류 간의 관계는 실험 설계와 결과 해석에서 신중한 고려가 필요하다. 연구자들은 거짓 양성(제1종 오류)을 피하려는 필요성과 실제 효과를 감지하려는 필요성(제2종 오류 최소화)을 균형 있게 맞춰야 하며, 종종 최적의 균형을 이루기 위해 표본 크기와 유의 수준을 조정한다.</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

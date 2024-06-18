@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Probability and Likelihood</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="probability-and-likelihood">Probability and Likelihood</h1>
+<h3 id="확률probability">확률(Probability)</h3>
+<p>사전에 정의된 매개변수의 분포를 가진 시행에서 특정 결과가 발생할 기회를 수량화한다. 예를 들어, 주사위를 굴릴 때 특정 숫자가 나올 확률이나, 동전을 10번 던져서 앞면이 나올 횟수의 확률을 계산할 수 있다.</p>
+<h3 id="가능성likelihood">가능성(Likelihood)</h3>
+<p>관측된 데이터가 주어졌을 때, 그 데이터가 특정 매개변수의 모델에서 나올 &quot;가능성&quot;을 나타낸다. 가능성은 특정 매개변수 값이 주어진 모델이 관측된 데이터를 얼마나 잘 설명하는지를 측정한다.</p>
+<ul>
+<li>확률은 사전에 특정 결과가 일어날 가능성을 말하며, 이산 사건 또는 연속 사건에 대한 기대를 정량화한다.
+우도는 주어진 파라미터가 실제 관측된 데이터를 얼마나 잘 설명하는지 나타내며, 주로 모델의 파라미터를 추정한다.</li>
+</ul>
+<h1 id="이산사건과-연속사건의-비교">이산사건과 연속사건의 비교</h1>
+<h3 id="이산-사건에서의-probability과-likelihood">이산 사건에서의 Probability과 Likelihood</h3>
+<p><code>이산 사건</code>은 명확하게 구분 가능한 결과를 가지는 사건이다. 예를 들어, 주사위를 던지거나 동전을 던지는 경우가 이에 해당한다.</p>
+<h4 id="확률">확률</h4>
+<ul>
+<li><code>이산 확률</code>은 각 결과가 발생할 확률을 명확히 할당할 수 있다. 예를 들어, 공정한 주사위를 던질 때 특정 숫자가 나올 확률은 정확히 1/6이다. 모든 사건의 확률을 더 하면 1이 된다.</li>
+</ul>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>k</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>n</mi><mi>k</mi></mfrac><mo fence="true">)</mo></mrow><msup><mi>p</mi><mi>k</mi></msup><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>p</mi><msup><mo stretchy="false">)</mo><mrow><mi>n</mi><mo>−</mo><mi>k</mi></mrow></msup></mrow><annotation encoding="application/x-tex">P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2em;vertical-align:-0.35em;"></span><span class="mord"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size1">(</span></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.7454em;"><span style="top:-2.355em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span><span style="top:-3.144em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size1">)</span></span></span><span class="mord"><span class="mord mathnormal">p</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0991em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<h4 id="likelihood">Likelihood</h4>
+<ul>
+<li>이산 사건에서의 <code>Likelihood</code>는 주어진 모델 또는 파라미터가 관측된 데이터를 얼마나 잘 설명하는지를 측정한다. 예를 들어, 여러 번의 주사위 던지기에서 나온 결과가 특정 주사위 모델(예: 주사위가 편향되었을 가능성)을 얼마나 잘 지지하는지를 나타낼 수 있다.</li>
+</ul>
+<h3 id="연속-사건에서의-probability과-likelihood">연속 사건에서의 Probability과 Likelihood</h3>
+<p><code>연속 사건</code>은 결과가 연속적인 값들의 범위로 표현될 수 있는 사건이다. 예를 들어, 사람의 키를 측정하는 것이나 온도를 측정하는 것이 이에 해당한다.</p>
+<h4 id="probability">Probability</h4>
+<ul>
+<li><code>연속 확률</code>은 확률 밀도 함수(<code>Probability Density Function</code>, PDF)를 사용하여 표현된다. 특정 정확한 값에 대한 확률은 0이지만, 값의 범위에 대한 확률은 PDF를 통해 계산될 수 있다. 예를 들어, 어떤 지역의 평균 기온이 20°C에서 25°C 사이일 확률을 구할 수 있다.</li>
+</ul>
+<h4 id="likelihood-1">Likelihood</h4>
+<ul>
+<li>연속 사건에서의 <code>Likelihood</code> 역시 특정 파라미터 값이 주어졌을 때 관측된 데이터의 합리성을 측정합니다. 이 경우, 우도는 데이터 포인트가 모델의 PDF에 의해 얼마나 잘 설명되는지를 나타내는 값입니다. 예를 들어, 정규 분포를 가정할 때 특정 평균과 표준편차를 가진 정규 분포 모델이 주어진 데이터를 얼마나 잘 설명하는지를 Likelihood로 계산할 수 있다.</li>
+</ul>
+<h3 id="결론">결론</h3>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/50162ead-eb2a-40bc-b6d1-496b6f5b849d/image.png" alt="">
+이산 및 연속 사건에서 <code>Probability</code>는 사건의 가능성을 측정하는 반면, <code>Likelihood</code>는 주어진 모델이나 파라미터 세트가 관참된 데이터를 어떻게 설명하는지를 나타내는 척도이다. 확률은 주로 사전 지식을 바탕으로 한 예측에 사용되고, 우도는 주어진 데이터를 가지고 모델을 평가하는 데 사용된다. 이러한 개념은 통계적 추론, 특히 모델 선택과 파라미터 추정에서 중요한 역할을 한다.</p>
+<h1 id="갱신">갱신</h1>
+<p>Probability와 Likelihood는 서로 다른 맥락에서 갱신될 수 있다. 이 두 개념을 어떻게 갱신하는지 구체적으로 살펴보자.</p>
+<h3 id="probability-갱신">Probability 갱신</h3>
+<p>Probability는 베이즈 통계에서 주로 갱신된다. 베이즈 정리를 사용하면 사전 확률(Prior Probability)과 새로운 증거(새로운 데이터)를 통합하여 사후 확률(Posterior Probability)을 계산할 수 있다. 이 과정에서 새로운 정보가 들어오면 확률 값이 업데이트된다. 예를 들어, 어떤 질병에 걸릴 확률을 알고 있을 때 새로운 검사 결과가 그 확률을 갱신하는 데 사용될 수 있다.</p>
+<h3 id="likelihood-갱신">Likelihood 갱신</h3>
+<p>Likelihood는 특정 모델 또는 파라미터에 대한 데이터의 지지도를 나타내며, 직접적인 확률 값이 아니다. 새로운 데이터가 관찰될 때마다 Likelihood는 계산되어 해당 모델 또는 파라미터 설정이 얼마나 잘 데이터를 설명하는지를 평가한다. 그러나 Likelihood 자체는 &quot;갱신&quot;되지 않는다. 대신, 새로운 데이터가 추가될 때마다 새로운 Likelihood 값이 계산되어 모델의 적합도를 다시 평가할 수 있다.</p>
+<h3 id="결론-1">결론</h3>
+<p>따라서, Probability는 새로운 정보를 받을 때마다 베이즈적 방식으로 갱신된다. 반면, Likelihood는 새로운 데이터가 주어질 때마다 다시 계산되어 모델 또는 파라미터의 적합도를 평가한다. Likelihood 자체는 이전 값에 대한 업데이트가 아니라 각 데이터 세트에 대해 새로 계산되는 값이다.</p>
+<h1 id="pdfprobability-density-function확률밀도함수">PDF:Probability Density Function(확률밀도함수)</h1>
+<ul>
+<li>확률밀도함수는 연속적인 사건의 확률을 설명할 때 사용된다. 예를 들어, 1과 6 사이의 수를 무작위로 선택할 때 특정 숫자를 선택할 확률은 0이지만, 특정 구간에 속하는 숫자를 선택할 확률은 0이 아닐 수 있다. 이때 PDF를 사용하여 특정 구간 내에서 변수가 취할 수 있는 값의 확률을 설명할 수 있다.</li>
+</ul>
+<h1 id="mle최대-가능도-추정">MLE(최대 가능도 추정)</h1>
+<ul>
+<li><code>Maximum Likelihood Estimation, MLE</code>: 모수와 파라미터의 정보가 없는 데이터 집합을 가장 잘 설명하는(likelihood가 최대인) 모델 매개변수(예: 정규분포의 평균과 분산)를 찾는 방법이다.</li>
+<li>이 방법은 특정한 분포(예: 정규분포, 이항분포 등)를 가정하고, 그 분포의 매개변수를 조정하여 관측된 데이터가 나타날 가능도를 최대화하는 매개변수 값을 찾는다.</li>
+</ul>
+<h3 id="likelihood-함수-ltheta-mid-x">Likelihood 함수 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>X</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L(\theta \mid X)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span></span></span></span></h3>
+<p>우도 함수는 파라미터 ( \theta )가 주어졌을 때 관측된 데이터 ( X )가 나타날 확률을 나타냅니다. 데이터 포인트들이 독립적일 때, 전체 데이터 세트에 대한 우도는 각 데이터 포인트의 확률을 곱한 것과 같다:</p>
+<blockquote>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">L(\theta \mid X) = P(X \mid \theta) = \prod_{i=1}^n P(x_i \mid \theta)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.104em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∏</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span></span></span></span>
+여기서 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span></span></span></span>은 데이터 포인트의 수이며, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>는 개별 데이터 포인트이다.</p>
+</blockquote>
+<h3 id="로그-우도-함수">로그 우도 함수</h3>
+<p>계산을 단순화하기 위해, 우도 함수의 로그를 취하는 것이 일반적이다. 로그는 증가 함수이기 때문에 우도 함수를 최대화하는 것과 로그 우도 함수를 최대화하는 것은 동일한 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 값을 결과로 한다. 로그를 취하면 곱셈이 덧셈으로 변환되어 계산이 간단해진다.</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>log</mi><mo>⁡</mo><mi>L</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\log L(\theta \mid X) = \sum_{i=1}^n \log P(x_i \mid \theta)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.104em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span></span></span></span></p>
+<h3 id="mle의-최적화">MLE의 최적화</h3>
+<p>로그 우도 함수를 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>에 대해 최대화하는 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 값을 찾기 위해, 미분을 사용하여 첫 번째 도함수를 0으로 설정하고 이를 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span>에 대해 푼다. 이 과정을 통해 최적의 파라미터 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi></mrow><annotation encoding="application/x-tex">\theta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span></span></span></span> 추정값을 얻을 수 있다.</p>
+<h3 id="예시">예시</h3>
+<p>정규 분포의 경우, 평균 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>와 분산 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>를 파라미터로 가지며, MLE를 사용하여 이 파라미터들을 추정할 수 있다. 이 때, 관측된 데이터의 평균을 최적의 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>로, 데이터의 분산을 최적의 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>로 설정하는 것이 일반적인 결과이다.</p>
+<h1 id="코드-구현">코드 구현</h1>
+<h3 id="mle-계산">MLE 계산</h3>
+<p>정규 분포 아래에서 관측치의 우도(Likelihood)를 계산하는 방법을 알아보자. 정규 분포는 평균 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>와 표준편차 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span>로 정의된다. 이 분포를 사용하여 단일 관측치의 우도를 계산하는 방법은 다음과 같다.</p>
+<h4 id="1단계-지수exponent-계산">1단계: 지수(exponent) 계산</h4>
+<ul>
+<li>관측값 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>와 평균 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span> 사이의 차이를 계산한다.</li>
+<li>이 차이를 제곱한 다음, 2와 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>σ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\sigma^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>로 나눈다.</li>
+<li>이 결과에 음수를 취합니다.</li>
+</ul>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>exponent</mtext><mo>=</mo><mo>−</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>μ</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{exponent} = -\frac{(x - \mu)^2}{2\sigma^2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8095em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">exponent</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.4539em;vertical-align:-0.345em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.1089em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">x</span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">μ</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<h4 id="2단계-우도-업데이트">2단계: 우도 업데이트</h4>
+<ul>
+<li>계산된 지수를 사용하여 우도를 업데이트한다. 정규 분포의 확률 밀도 함수(PDF) 공식을 사용한다.</li>
+</ul>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>∣</mo><mi>μ</mi><mo separator="true">,</mo><mi>σ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>π</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow></msqrt></mfrac><msup><mi>e</mi><mtext>exponent</mtext></msup></mrow><annotation encoding="application/x-tex">f(x \mid \mu, \sigma) = \frac{1}{\sqrt{2\pi\sigma^2}} e^{\text{exponent}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">μ</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3831em;vertical-align:-0.538em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.5154em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9638em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mtight" style="padding-left:0.833em;"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.9238em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.0762em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.538em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7936em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">exponent</span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<ul>
+<li>여기서 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>π</mi><msup><mi>σ</mi><mn>2</mn></msup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\frac{1}{\sqrt{2\pi\sigma^2}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3831em;vertical-align:-0.538em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.5154em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9638em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mtight" style="padding-left:0.833em;"><span class="mord mtight">2</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">σ</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.9238em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.0762em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.538em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>는 정규화 상수로, 모든 확률의 합이 1이 되도록 보장한다.</li>
+</ul>
+<p>따라서, 특정 관측값 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>의 우도는 평균 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>와 표준편차 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span>가 주어진 정규 분포에서 위의 식을 사용하여 계산된다. 이 우도 값은 그 관측치가 주어진 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>와 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span>를 가진 정규 분포에서 얼마나 일반적인지, 또는 얼마나 이례적인지를 수치적으로 나타낸다.</p>
+<p>이 계산법은 최대 우도 추정(MLE)에서 중요한 단계이다. 데이터 집합 전체에 대한 우도를 최대화하는 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi></mrow><annotation encoding="application/x-tex">\mu</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">μ</span></span></span></span>와 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">σ</span></span></span></span> 값을 찾기 위해 사용된다. 각 관측치에 대해 우도를 계산하고, 이들을 곱하여 전체 데이터 세트의 우도를 얻으며, 이를 최대화하는 파라미터를 찾는다.</p>
+<h3 id="전체-코드">전체 코드</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> math
+<span class="hljs-comment">##### Sample Dataset (10) #####</span>
+measurements = [<span class="hljs-number">2.1</span>, <span class="hljs-number">2.2</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">2.3</span>, <span class="hljs-number">2.1</span>, <span class="hljs-number">2.2</span>, <span class="hljs-number">2.1</span>, <span class="hljs-number">2.4</span>, <span class="hljs-number">2.3</span>, <span class="hljs-number">2.2</span>]
+<span class="hljs-comment">##### Function: :Likelihood calculation #####</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">calculate_likelihood</span>(<span class="hljs-params">data, mu, sigma</span>):
+    likelihood = <span class="hljs-number">1.0</span>
+    <span class="hljs-keyword">for</span> measurement <span class="hljs-keyword">in</span> data:
+        exponent = -(measurement-mu)**<span class="hljs-number">2</span>/(<span class="hljs-number">2</span>*sigma**<span class="hljs-number">2</span>)
+        likelihood *= (<span class="hljs-number">1</span>/(sigma*math.sqrt(<span class="hljs-number">2</span>*math.pi)))*math.exp(exponent)
+    <span class="hljs-keyword">return</span> likelihood
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment">### 1. Calculate the likelihood ###</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;### 1. Calculate the likelihood ###&quot;</span>)
+<span class="hljs-comment"># 모수의 평균을 2.2라고 가정한 값</span>
+mean = <span class="hljs-number">2.2</span>
+<span class="hljs-comment"># 표준편차 역시 가정한 값</span>
+std_dev = <span class="hljs-number">0.1</span>
+<span class="hljs-comment"># 계산</span>
+likelihood = calculate_likelihood(measurements, mean, std_dev)
+<span class="hljs-comment"># 만일 mean이 2.2이고 std_dev이 0.1일 likelyhood</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Likelihood:&quot;</span>, likelihood)
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment">### 2. Calculate the likelihoods by changing mean values ###</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;### 2. Calculate the likelihoods by changing mean values ###&quot;</span>)
+<span class="hljs-comment"># 직관을 위해 가정 값을 여러개 두자</span>
+mean_list = [<span class="hljs-number">2.0</span>, <span class="hljs-number">2.1</span>, <span class="hljs-number">2.2</span>, <span class="hljs-number">2.3</span>, <span class="hljs-number">2.4</span>]
+std_dev = <span class="hljs-number">0.1</span>
+<span class="hljs-comment"># 계산</span>
+<span class="hljs-keyword">for</span> mean <span class="hljs-keyword">in</span> mean_list:
+    likelihood = calculate_likelihood(measurements, mean, std_dev)
+    <span class="hljs-comment"># 각각의 평균과 편차에 대한 likelyhood </span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Mean: <span class="hljs-subst">{mean}</span>, Likelihood: <span class="hljs-subst">{likelihood}</span>&quot;</span>)
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment">### 3. Calculate the likelihoods by changing both mean and std values ###</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;### 3. Calculate the likelihoods by changing both mean and std values ###&quot;</span>)
+<span class="hljs-comment"># 두개를 다 돌려보자</span>
+mean_list = [<span class="hljs-number">2.0</span>, <span class="hljs-number">2.1</span>, <span class="hljs-number">2.2</span>, <span class="hljs-number">2.3</span>, <span class="hljs-number">2.4</span>]
+std_dev_list = [<span class="hljs-number">0.1</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.3</span>, <span class="hljs-number">0.4</span>, <span class="hljs-number">0.5</span>]
+<span class="hljs-comment"># Calculate the likelihoods by changing both mean and std values</span>
+<span class="hljs-keyword">for</span> mean <span class="hljs-keyword">in</span> mean_list:
+    <span class="hljs-keyword">for</span> std_dev <span class="hljs-keyword">in</span> std_dev_list:
+        likelihood = calculate_likelihood(measurements, mean, std_dev)
+        <span class="hljs-comment"># 각각의 평균과 편차에 대한 likelyhood </span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Mean: <span class="hljs-subst">{mean}</span>, std:<span class="hljs-subst">{std_dev}</span>, Likelihood: <span class="hljs-subst">{likelihood}</span>&quot;</span>)
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-comment">### 4. Maximum likelihood estimation ###</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;### 4. Maximum likelihood estimation ###&quot;</span>)
+max_likelihood = -<span class="hljs-number">99</span>
+<span class="hljs-keyword">for</span> mean <span class="hljs-keyword">in</span> np.arange(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0.001</span>):
+    <span class="hljs-keyword">for</span> std <span class="hljs-keyword">in</span> np.arange(<span class="hljs-number">0.1</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.001</span>):
+        likelihood = calculate_likelihood(measurements, mean, std)
+        <span class="hljs-keyword">if</span> max_likelihood &lt; likelihood:
+            max_likelihood = likelihood
+            best_mean = mean
+            best_std_dev = std
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Maximum Likelihood Estimation:&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Best Mean: <span class="hljs-subst">{best_mean}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Best Standard Deviation: <span class="hljs-subst">{best_std_dev}</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Max Likelihood: <span class="hljs-subst">{max_likelihood}</span>&quot;</span>)
+</code></pre>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

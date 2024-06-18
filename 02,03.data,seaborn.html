@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Understanding Data Characteristics</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="understanding-data-characteristics">Understanding Data Characteristics</h1>
+<p>데이터 분석을 시작하기전, 다루고 있는 데이터를 철저히 이해해야 한다.!</p>
+<p>다루는 데이터에 대한 철저한 이해는 분석 방법을 선택하고 적용하는 것의 기반이 된다.
+고려해야할 특성들은 아래와 같다.</p>
+<blockquote>
+<ul>
+<li>데이터 타입 : 데이터의 타입이 이산적인지, 비율인지, 명목형 등등 중에서 어떤 것인지 아는것은 올바른 분석법을 선택하는 데에 핵심이다.</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터의 분산 : 분산의 범위와 모양은 어떤 분석이 적절한지 선택하는 데에 큰 영향을 미친다.</li>
+<li>변수들간의 관계 : 변수들간의 상관관계 역시 올바른 분석법을 선택하는데 가이드의 역할을 한다.</li>
+</ul>
+<h1 id="data-types">Data Types</h1>
+<p>데이터의 타입은 크게 Univariate Data(단변량 데이터)와 Multivariate Data(다변량 데이터)로 나뉜다.
+이 두가지 분석 모두에서 올바르게 데이터의 특성을 이해하는 것은 분석법과 분석기술 선택에 있어서 중요하다.
+아래에 두가지 방법론에 대해 설명한다.</p>
+<h2 id="univariate-data단변량-데이터">Univariate Data(단변량 데이터)</h2>
+<p>단일 변수 분석, 데이터를 설명하고 그 안에서 발생하는 패턴을 찾는 것이 주 목적이다.
+주요 유형은 다음과 같다.</p>
+<h3 id="nominal-categorical-data--명목범주형-데이터">Nominal (Categorical) Data : 명목(범주형) 데이터</h3>
+<ul>
+<li>자연적인 순서가 없는 카테고리나 그룹</li>
+<li>eg. 성별, 음식 종류, 혈액형 등등</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 선호하는 애완동물의 종류에 대한 Survey 답변</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : {개, 고양이, 앵무새, 이구아나}</li>
+<li>분석 : 각 데이터의 갯수/퍼센트 파악</li>
+</ul>
+<h3 id="ordinal-data--서열-데이터">Ordinal Data : 서열 데이터</h3>
+<ul>
+<li>명목 데이터와 유사하지만 데이터간 논리적이거나 자연적인 순서가 있는 데이터</li>
+<li>카테고리 간의 간격이 반드시 동일하지는 않는다.</li>
+<li>eg. 교육수준(고등학교, 학사, 석사, 박사), 만족도(매우불만족-불만족-보통-만족-매우만족)</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 상품에 대한 평점(1점~5점)</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : {1 (Very Unsatisfied), 2 (Unsatisfied), 3 (Neutral), 4 (Satisfied), 5 (Very Satisfied)}</li>
+<li>분석 : Median rating or distribution of satisfaction levels.</li>
+</ul>
+<h3 id="interval-data--간격-데이터">Interval Data : 간격 데이터</h3>
+<ul>
+<li>두 값 사이의 거리가 의미 있는숫자 데이터</li>
+<li>진정한 영점은 없다.(0이 없음을 의미하지 않는다)</li>
+<li>eg. 화씨, 섭씨온도. 0도가 온도가 없다는걸 의미하진 X</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 각 도시별 현재 온도</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : {New York: 20°C, Los Angeles: 25°C, Chicago: 15°C, Miami: 30°C}</li>
+<li>분석 : 평균 온도, 온도 분포, 각 도시별 온도 비교</li>
+</ul>
+<h3 id="ratio-data--비율-데이터">Ratio Data : 비율 데이터</h3>
+<ul>
+<li>숫자 데이터이며 간격데이터와 유사하지만, 의미있는 0의 값을 가진다.</li>
+<li>비율의 계산이 가능하다.</li>
+<li>eg. 키, 무게, 나이, 소득(소득이 0 = 소득이 없음)</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 학생들의 키 조사</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : {170 cm, 160 cm, 165 cm, 175 cm, 180 cm}</li>
+<li>분석 : 평균 키, 키 분포, 가장 큰 키와 작은 키 식별</li>
+</ul>
+<h2 id="multivariate-data다변량-데이터">Multivariate Data(다변량 데이터)</h2>
+<ul>
+<li>다변량 데이터는 한번에 둘 이상의 변수를 분석하여 변수 간의 관계와 패턴을 검토할 수 있는 데이터이다.</li>
+<li>각각의 단변량데이터(Nominal, Ordinal, Interval, Ratio)데이터간의 조합으로 이루어져 있다.</li>
+</ul>
+<h3 id="survey-data--설문조사-데이터">Survey Data : 설문조사 데이터</h3>
+<ul>
+<li>다양한 데이터타입의 응답이 모여있는 survey 데이터. 예를 들어 나이(ratio), 성별(nominal), 소득 수준 (ratio), 만족도 조사(ordinal), 그리고 서비스 사용빈도(ratio)이다.</li>
+<li>다양한 변수를 함께 고려하여 고객들의 선호와 행동에 대한 insight를 얻을 수 있다.</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 성별, 선호하는 애완동물 유형, 만족도 평가를 포함한 설문조사 응답</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : 각 응답자의 데이터는 {Gender: Female, Pet Preference: Cat, Satisfaction: 4 (Satisfied)} 와 같을 수 있다.</li>
+<li>분석 : 성별과 애완동물 선호 사이의 관계 또는 다양한 애완동물 선호도 간의 만족도 수준 확인.</li>
+</ul>
+<h3 id="health-data--건강-데이터">Health Data : 건강 데이터</h3>
+<ul>
+<li>의학 연구에서는 환자의 나이(ratio), 성별(nominal), 혈압(ratio), 콜레스테롤 수치(ratio), 그리고 질병분류(nominal)와 같은 다변량 데이터를 자주 수집한다.</li>
+<li>연구자들은 생활 습관 요인과 건강 결과 사이의 관계를 탐구할 수 있다.</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 환자의 나이, 성별, 혈압, 질병 분류</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : 환자 기록은 {나이: 45, 성별: 남성, 혈압: 120/80 mmHg, 질병: 고혈압}일 수 있다.</li>
+<li>분석 : 나이, 혈압, 고혈압의 유병률 사이의 상관관계 조사; 성별에 따른 차이 분석</li>
+</ul>
+<h3 id="financial-data--재무-데이터">Financial Data : 재무 데이터</h3>
+<ul>
+<li>재무 분석가들은 회사의 수익(ratio), 이익률(ratio), 시장 점유율(ratio), 그리고 산업분류(nominal) to identify 와 같은 다양한 변수를 검토하여 재무 성과를 이끄는 요인들을 식별할 수 있다.</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 회사의 연간 수익, 이익률, 산업 분류</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : 회사 데이터는 {수익: $10M, 이익률: 15%, 산업종류: 기술산업}과 같을 수 있다.</li>
+<li>분석 : 산업별 재무 건전성 분석; 기술 및 비기술 분야 간의 수익과 이익률 비교</li>
+</ul>
+<h3 id="environmental-data--환경-데이터">Environmental Data : 환경 데이터</h3>
+<ul>
+<li>환경 변화에 대한 연구는 온도(interval), 강수량(ratio), 오염 수준(ratio), 그리고 다양한 지역 및 시간에 따른 식생 유형(nominal)과 같은 변수를 포함할 수 있다.</li>
+</ul>
+<blockquote>
+<ul>
+<li>데이터 예시 : 다양한 지역의 월 평균 온도, 강수량, 식생 유형</li>
+</ul>
+</blockquote>
+<ul>
+<li>데이터 포인트 : 지역 데이터는 {온도: 22°C, 강수량: 120 mm, 식생: 숲}일 수 있다.</li>
+<li>분석 : 기후 패턴 및 그것이 식생 유형에 미치는 영향 연구; 지역 간 환경 요인 비교</li>
+</ul>
+<h1 id="data-visualization---seaborn">Data Visualization - Seaborn</h1>
+<ul>
+<li>데이터의 특성을 이해하고 시각화 기술을 사용하는 것은 데이터 분석에서 필수적인 프로세스이다.</li>
+<li>파이썬에서는 matplotlib, seaborn, plotly 등 다양한 시각화 라이브러리를 지원하는데, 그 중에서도 자주 활용되는 seaborn library에 대해 코드화 함께 아래에 정리한다.</li>
+<li>Seaborn라이브러리는 통계 그래픽을 좀 더 직관적이고 간결하게 생성해주는 파이썬 라이브러리이다.</li>
+<li><a href="https://seaborn.pydata.org/api.html">Seaborn라이브러리</a> 페이지에서 자세한 plot 종류와 설명을 확인할 수 있다.</li>
+</ul>
+<h2 id="import--data-확인">import &amp; data 확인</h2>
+<h3 id="libary-import">libary import</h3>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">from</span> matplotlib <span class="hljs-keyword">import</span> rcParams
+<span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns
+<span class="hljs-keyword">import</span> warnings
+</code></pre>
+<h3 id="load-titanic-dataset">load titanic dataset</h3>
+<pre><code class="language-python"><span class="hljs-comment"># Data load(titanic)</span>
+df_titanic=sns.load_dataset(<span class="hljs-string">&#x27;titanic&#x27;</span>)
+</code></pre>
+<h3 id="use-head-info-describe-for-understanding-dataset">Use .head(), .info(), .describe() for understanding dataset</h3>
+<pre><code class="language-python"><span class="hljs-comment"># Understanding data</span>
+<span class="hljs-built_in">print</span>(df_titanic.head())
+<span class="hljs-built_in">print</span>(df_titanic.info())
+<span class="hljs-built_in">print</span>(df_titanic.describe())
+</code></pre>
+<ul>
+<li>Pandas 라이브러리에서 DataFrame 객체를 다룰 때 사용되는 메서드들이다.</li>
+<li>각각의 목적과 결과는 아래에 설명했다.</li>
+</ul>
+<h4 id="df_titanichead">df_titanic.head()</h4>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ea0a7ba9-48b1-45d0-bb10-34674e3b9998/image.png" alt=""></p>
+<ul>
+<li>DataFrame의 상위 n개의 행을 반환한다. 기본값으로는 상위 5개의 행을 보여준다.</li>
+<li>데이터셋의 처음 몇 개의 행을 빠르게 살펴보고 싶을 때 사용한다.</li>
+<li>이를 통해 데이터의 구조, 변수의 데이터 타입, 결측치나 이상치의 존재 여부 등을 초기에 파악할 수 있다.</li>
+</ul>
+<h4 id="df_titanicinfo">df_titanic.info()</h4>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/9c4b6dcd-f5c8-4a6d-94b2-502f77c1c4a9/image.png" alt=""></p>
+<ul>
+<li>DataFrame에 대한 요약 정보를 출력한다.</li>
+<li>이 메서드는 인덱스의 범위, 컬럼 이름, 컬럼별 데이터 타입, 비결측치(non-null) 값의 개수, 메모리 사용량 등을 보여준다.</li>
+<li>데이터셋의 구조적인 정보를 파악하고 싶을 때 사용한다.</li>
+<li>각 컬럼의 데이터 타입과 결측치의 유무를 빠르게 확인할 수 있어 데이터 전처리 과정에서 유용하게 사용한다.</li>
+</ul>
+<h4 id="df_titanicdescribe">df_titanic.describe()</h4>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/d2587744-0170-4420-8e52-1cfb5577f517/image.png" alt=""></p>
+<ul>
+<li>DataFrame의 각 수치형(numerical) 컬럼에 대한 기술 통계를 요약하여 보여준다.</li>
+<li>기본적으로 count(개수), mean(평균), std(표준편차), min(최소값), 25%, 50%(중앙값), 75%, max(최대값) 등의 통계량을 포함한다.</li>
+<li>추가로 include와 exclude 매개변수를 사용해 분석하고자 하는 데이터 타입을 지정할 수 있다.</li>
+<li>데이터셋의 수치형 변수들에 대한 기본적인 통계적 분석을 하고 싶을 때 사용한다.</li>
+<li>이 메서드를 통해 데이터의 분포, 중심 경향성, 변동성 등을 빠르게 파악할 수 있으며, 이상치의 존재 여부를 짐작해볼 수도 있다.</li>
+</ul>
+<h4 id="df_titaniccolumn_namevalue_counts">df_titanic[column_name].value_counts()</h4>
+<p>각 컬럼별 분포를 간단히 확인할때 사용한다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># DataFrame[column name].value_counts()</span>
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;survived&#x27;</span>].value_counts()) <span class="hljs-comment"># 0:Dead, 1:survived</span>
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;sex&#x27;</span>].value_counts()) <span class="hljs-comment"># male/female</span>
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;age&#x27;</span>].value_counts())
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].value_counts())
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;class&#x27;</span>].value_counts()) <span class="hljs-comment"># First, second, third</span>
+<span class="hljs-built_in">print</span>(df_titanic[<span class="hljs-string">&#x27;who&#x27;</span>].value_counts()) <span class="hljs-comment"># man, woman, child</span>
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/304d20c6-9545-4599-9df8-7e1ac846baf5/image.png" alt=""></p>
+<h2 id="titanic-dataset">titanic dataset</h2>
+<p>실제 데이터셋 각 컬럼의 설명은 아래와 같다.</p>
+<blockquote>
+<ul>
+<li>Survived: 생존 여부 (0 = 사망, 1 = 생존)</li>
+</ul>
+</blockquote>
+<ul>
+<li>Pclass: 객실 등급 (1 = 1등석, 2 = 2등석, 3 = 3등석)</li>
+<li>Sex: 성별 (male = 남성, female = 여성)</li>
+<li>Age: 나이</li>
+<li>SibSp: 동반한 형제자매/배우자 수</li>
+<li>Parch: 동반한 부모/자녀 수</li>
+<li>Fare: 요금</li>
+<li>Embarked: 탑승 항구 (C = 셰르부르, Q = 퀸스타운, S = 사우샘프턴)</li>
+<li>Class: 객실 등급 (First = 1등석, Second = 2등석, Third = 3등석)</li>
+<li>Who: 인물 구분 (man, woman, child)</li>
+<li>Adult_Male: 성인 남성 여부 (True = 성인 남성, False = 그 외)</li>
+<li>Deck: 객실 번호 첫 글자 (A, B, C, D, E, F, G)</li>
+<li>Embark_Town: 탑승지 명칭 (Cherbourg, Queenstown, Southampton)</li>
+<li>Alive: 생존 여부 (no = 사망, yes = 생존)</li>
+<li>Alone: 혼자 탑승 여부 (True = 혼자 탑승, False = 가족 동반)</li>
+</ul>
+<h2 id="relational-plots">Relational Plots</h2>
+<ul>
+<li>Relational Plots(관계형 플롯)은 두 개 이상의 변수간의 관계를 이해하기 위해 사용된다.</li>
+</ul>
+<h3 id="scatterplot">scatterplot()</h3>
+<ul>
+<li>두 변수 사이의 관계를 보여주기 위해 산점도를 그린다.</li>
+<li>두 수치변수 사이의 분포와 관계를 관찰하는데 유용하다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (8) Fares by age</span>
+sns.scatterplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/51f7560b-0090-49f7-80ed-832e12a2aa86/image.png" alt=""></p>
+<ul>
+<li>x축을 나이, y축을 요금으로 scatter를 그려본 결과이다. 나이와 요금의 상관관계를 알 수 있다.</li>
+</ul>
+<h4 id="hue">hue</h4>
+<ul>
+<li>x, y축을 그릴 때 사용한 변수말고 추가적인 Categorical 데이터가 있는경우, hue 인수에 카테고리 변수 이름을 지정하여 추가적인 서브 분류(subdivides)를 진행할 수 있다.</li>
+<li>이는 Relational Plots을 말고도 아래 추가적으로 설명할 Categorical Plots과 같은 다른 플롯에도 적용할 수 있다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (8) Fares by age (men and women)</span>
+sns.scatterplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ef2d5cb6-10db-49d1-bb84-dd4258bf7f87/image.png" alt=""></p>
+<ul>
+<li>위 코드는 기존 코드에 Categorical 데이터인 성별을 서브 분류로 사용하였다.</li>
+</ul>
+<h4 id="quantile">quantile</h4>
+<p>-quantile은 데이터를 동등한 부분으로 나누는 값을 의미한다.
+-데이터 세트의 분포에서 특정 위치에 해당하는 값이며, 이 위치는 전체 데이터의 백분위수로 표현한다.</p>
+<blockquote>
+<p>25% quantile (Q1, 1사분위수) : 하위 25%의 데이터가 이 값 이하이고, 상위 75%가 이 값 이상이다.
+50% quantile (Q2, 2사분위수) : 짝수 개의 데이터가 있는 경우 중앙에 위치한 두 값의 평균이다. 중앙 값이라고도 불린다.
+75% quantile (Q3, 3사분위수) : 하위 75%의 데이터가 이 값 이하이고, 상위 25%가 이 값 이상이다.</p>
+</blockquote>
+<pre><code class="language-python"><span class="hljs-comment"># &#x27;fare&#x27; 컬럼의 3사분위수(Q3, 하위 75% 지점의 값)를 계산</span>
+fare_q3 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.75</span>)
+<span class="hljs-comment"># &#x27;fare&#x27; 컬럼의 1사분위수(Q1, 하위 25% 지점의 값)를 계산</span>
+fare_q1 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.25</span>)
+
+<span class="hljs-comment"># &#x27;fare&#x27;의 IQR(Interquartile Range, 사분위수 범위)을 계산</span>
+<span class="hljs-comment"># Q3에서 Q1을 뺀 값으로, 데이터의 중간 50% 범위를 나타낸다.</span>
+fare_iqr = fare_q3 - fare_q1
+
+<span class="hljs-comment"># df_titanic[&#x27;fare&#x27;]의 값들이 fare_iqr의 4배한 값안에 들어가는지 검사</span>
+condition = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>] &lt;= <span class="hljs-number">4</span>*fare_iqr
+<span class="hljs-comment"># 검사 범위 안에 들어가는 값으로 새로운 dataframe 선언</span>
+new_df_titanic = df_titanic[condition]
+
+sns.scatterplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, data=new_df_titanic)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ebe87c69-7379-4938-96f8-dddd76e7d7de/image.png" alt=""></p>
+<ul>
+<li>위 코드를 통해 기존 plot에 있던 fare가 500이 넘어가는 outlier(이상치)값을 제거했다.</li>
+</ul>
+<h3 id="lineplot">lineplot()</h3>
+<ul>
+<li>시간이나 정렬된 순서가 있는 categorical 데이터를 시각하는데 유용한 라인플롯을 그린다.</li>
+<li>시간의 연속성이나 categorical 데이터를 직관적으로 보여준다.</li>
+</ul>
+<pre><code class="language-python">data_path = <span class="hljs-string">&quot;4.csv&quot;</span>
+data = pd.read_csv(data_path)
+time_column = data[<span class="hljs-string">&quot;Time&quot;</span>]
+sns.lineplot(data=data, x = <span class="hljs-string">&quot;Time&quot;</span>, y = <span class="hljs-string">&quot;1&quot;</span>)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/107f4cea-3f56-4587-b026-ef392fcaa6de/image.png" alt=""></p>
+<ul>
+<li>titanic 데이터는 별도의 시간의 연속성을 나타내는 그래프가 없어서 다른 데이터를 불러와 시각화 했다.
+<img src="https://velog.velcdn.com/images/kms39273/post/e6664305-da74-46ad-af2c-a9bf4353cba8/image.png" alt=""></li>
+<li>나이대에 따른 생존률 추이를 확인할 수 있다.</li>
+<li>titanic 데이터를 다듬어서 위 그림처럼 나이를 clustering 하여 순서가 있는 categorical 데이터를 만들었다.</li>
+<li>lineplot을 이용하여 순서가 있는 categorical 데이터의 추이를 직관적으로 확인할 수 있다.</li>
+</ul>
+<h2 id="categorical-plots">Categorical Plots</h2>
+<p>최소한 하나의 데이터가 categorical 데이터일때 시각화에 사용된다.</p>
+<h3 id="catplot">catplot()</h3>
+<p>범주형 데이터를 그리는 여러 함수에 접근할 수 있는 figure-level 함수이다.</p>
+<ul>
+<li>countplot, barplot, boxplot, violinplot등 범주형 데이터를 그리기 위한 여러 함수에 접근할 수 있다.</li>
+<li>다양한 유형의 플롯을 통합된 인터페이스로 생성할 수 있다.</li>
+</ul>
+<h4 id="countplot">countplot()</h4>
+<p>막대를 사용하여 각 범주형 구간에서 관측치의 수를 보여준다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># (2-1) Number of people in each room class</span>
+sns.catplot(x=<span class="hljs-string">&#x27;class&#x27;</span> ,kind=<span class="hljs-string">&#x27;count&#x27;</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ee9b7552-b930-472d-9822-46c270bee65a/image.png" alt=""></p>
+<ul>
+<li>클래스별 생존자를 확인할 수 있다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (2-2) Number of men, women, and children by room class</span>
+sns.catplot(x=<span class="hljs-string">&#x27;class&#x27;</span>,hue=<span class="hljs-string">&#x27;who&#x27;</span>, kind=<span class="hljs-string">&#x27;count&#x27;</span>,data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/0e288818-9b59-41d7-9a7d-ced324bcfb4b/image.png" alt=""></p>
+<ul>
+<li>클래스별 생존자를 확인하면서 subdivide로 남/녀/아이를 추가로 분석한다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (2-3) Number of people in each room class by survival status</span>
+sns.catplot(x=<span class="hljs-string">&#x27;class&#x27;</span>, hue=<span class="hljs-string">&#x27;survived&#x27;</span>, kind=<span class="hljs-string">&#x27;count&#x27;</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/32c696e9-c940-408f-bd7c-493ab28268c2/image.png" alt=""></p>
+<ul>
+<li>클래스별 생존 유무를 파악할 수 있다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (2-myself) Number of people in each room class by survival status</span>
+sns.catplot(x=<span class="hljs-string">&#x27;survived&#x27;</span>, hue=<span class="hljs-string">&#x27;class&#x27;</span>, kind=<span class="hljs-string">&#x27;count&#x27;</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/36cd4640-7494-4aef-ba4c-63145a7b753c/image.png" alt=""></p>
+<ul>
+<li>
+<p>생존 유무별 클래스를 파악할 수 있다. 하지만 직접적인 비율을 보기는 힘든데, 그럴경우에 histplot을 이용하면 직접적인 비율 파악이 쉬워진다.(게시글에서 '2-4' 검색)</p>
+</li>
+<li>
+<p>barplot()
+범주형 변수의 각 카테고리에 대해 수치형 변수의 평균(또는 다른 추정치)을 오차 막대와 함께 표시한다.</p>
+</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (3) Average age and deviation by room class</span>
+sns.catplot(x=<span class="hljs-string">&#x27;class&#x27;</span>, y=<span class="hljs-string">&#x27;age&#x27;</span>, kind=<span class="hljs-string">&#x27;bar&#x27;</span>, data=df_titanic)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/bf42ee6f-a891-4141-837c-4f5a079c2951/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (4) Proportion of Survivors and Dead (bar vs. pie)</span>
+fig, axes = plt.subplots(ncols=<span class="hljs-number">2</span>)
+df_titanic[<span class="hljs-string">&quot;survived&quot;</span>].value_counts().plot(kind = <span class="hljs-string">&quot;bar&quot;</span>, ax=axes[<span class="hljs-number">0</span>])
+df_titanic[<span class="hljs-string">&quot;survived&quot;</span>].value_counts().plot(kind = <span class="hljs-string">&quot;pie&quot;</span>, autopct=<span class="hljs-string">&#x27;%1.1f%%&#x27;</span>, ax=axes[<span class="hljs-number">1</span>])
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/4068a069-9029-4b7e-bb72-99649cee48ca/image.png" alt=""></p>
+<h4 id="boxplot">boxplot()</h4>
+<ul>
+<li>(picture)
+데이터 세트의 사분위수를 사용하여 다른 카테고리에 걸쳐 정량적 데이터의 분포를 보여주며, 이상치(outliers)를 강조 표시한다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (5) boxplot</span>
+<span class="hljs-comment"># (5-1) Age distribution of survivors and dead</span>
+fig, axes = plt.subplots(ncols=<span class="hljs-number">2</span>)
+sns.boxplot(x=<span class="hljs-string">&#x27;survived&#x27;</span>,y=<span class="hljs-string">&#x27;age&#x27;</span>,data=df_titanic, ax=axes[<span class="hljs-number">0</span>])
+<span class="hljs-comment"># (5-2) Age distribution of men, women and children</span>
+sns.boxplot(x=<span class="hljs-string">&#x27;who&#x27;</span>,y=<span class="hljs-string">&#x27;age&#x27;</span>,data=df_titanic,ax=axes[<span class="hljs-number">1</span>])
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/662730a3-981a-423c-aec7-f6008f70109e/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (5-3) Lab: Fare distribution according to room class</span>
+sns.catplot(x=<span class="hljs-string">&#x27;class&#x27;</span>,y=<span class="hljs-string">&#x27;fare&#x27;</span>,kind=<span class="hljs-string">&#x27;box&#x27;</span>,data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/f6efbbc6-62a9-4c44-8ffc-c51f97d2d520/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (5-4) Remove the outliers</span>
+fare_q3 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.75</span>)
+fare_q1 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.25</span>)
+fare_iqr= fare_q3 -fare_q1
+condition = df_titanic[<span class="hljs-string">&#x27;age&#x27;</span>] &lt;= <span class="hljs-number">4</span>*fare_iqr
+new_df_titanic= df_titanic[condition]
+sns.boxplot(data=new_df_titanic, x=<span class="hljs-string">&#x27;survived&#x27;</span>, y=<span class="hljs-string">&#x27;age&#x27;</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ee7effdc-97c5-46c8-8ee4-35057925676d/image.png" alt=""></p>
+<ul>
+<li>scatter plot을 찍었을 때와 마찬가지로 outliers를 날린 그림이다.</li>
+</ul>
+<h4 id="violinplot">violinplot()</h4>
+<ul>
+<li>(picture)
+boxplots과 kernel density plots의 측면을 결합하여 다른 카테고리에 걸쳐 데이터의 분포와 그 확률 밀도를 보여준다.</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (6-1) Age distribution of men, women and children</span>
+sns.catplot(x=<span class="hljs-string">&#x27;who&#x27;</span>,y=<span class="hljs-string">&#x27;age&#x27;</span>,kind=<span class="hljs-string">&#x27;violin&#x27;</span>,data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/851fca7d-bcb6-46b4-a03c-f1da912c0b95/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (6-2) lab: Fare distribution of survivors and dead</span>
+sns.catplot(x=<span class="hljs-string">&#x27;survived&#x27;</span>,y=<span class="hljs-string">&#x27;fare&#x27;</span>,kind=<span class="hljs-string">&#x27;violin&#x27;</span>,data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/b28b0c3f-1d1f-46a8-8db5-6de547d04053/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (6-3) lab: Fare distribution of survivors and dead after removing outliers</span>
+fare_q3 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.75</span>)
+fare_q1 = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>].quantile(q=<span class="hljs-number">0.25</span>)
+fare_iqr= fare_q3 -fare_q1
+condition = df_titanic[<span class="hljs-string">&#x27;fare&#x27;</span>] &lt;= <span class="hljs-number">4</span>*fare_iqr
+new_df_titanic= df_titanic[condition]
+sns.catplot(x=<span class="hljs-string">&#x27;survived&#x27;</span>,y=<span class="hljs-string">&#x27;fare&#x27;</span>,kind=<span class="hljs-string">&#x27;violin&#x27;</span>,data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/f1cb5f77-bbe5-43c6-82f8-2913e730624e/image.png" alt=""></p>
+<h4 id="barplot-vs-countplot">Barplot vs countplot</h4>
+<ul>
+<li>barplot()은 범주형 변수와 연속형 변수 사이의 관계를 관찰하고자 할 때 사용된다. - barplot 함수는 각 카테고리에 대한 연속 변수의 평균을 표시(기본설정)하며, 평균 추정치 주변의 불확실성을 보여주는 오차 막대를 포함한다.</li>
+<li>eg. 다양한 학습 그룹(범주형 변수)의 평균 시험 점수(연속형 변수)를 이해하고 싶다면, barplot이 적합하다.</li>
+<li>countplot()은 데이터셋이 범주형이고 각 카테고리에서 발생한 횟수를 단순히 계산하는 barplot의 특별한 경우이다.</li>
+<li>eg. 각 학습 그룹(범주형 변수)의 학생 수를 단순히 계산하고 싶다면, countplot을 사용하면 된다.</li>
+</ul>
+<h2 id="distribution-plots">Distribution Plots</h2>
+<p>Distribution plot은 데이터셋의 분포를 시각화하기 위해 설계된 plot이다.</p>
+<h3 id="distplothistplot">distplot()/histplot()</h3>
+<p>단변량 데이터셋의 분포를 히스토그램으로 시각화하고, 데이터에 커널 밀도 추정(KDE)을 적용할 수도 있다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># Distribution of Age</span>
+sns.histplot(data=df_titanic, x=<span class="hljs-string">&#x27;age&#x27;</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/10dc784e-4115-4f10-933e-9f818b541429/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (2-4) Number of survivors and dead by room class</span>
+sns.histplot(x=<span class="hljs-string">&#x27;class&#x27;</span>, hue=<span class="hljs-string">&#x27;survived&#x27;</span>, multiple=<span class="hljs-string">&#x27;stack&#x27;</span>, shrink=<span class="hljs-number">.5</span>, data=df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/9f2d747c-aaa2-4b21-86f0-0622e2011361/image.png" alt=""></p>
+<h3 id="kdeplot">kdeplot()</h3>
+<p>커널 밀도 추정을 플로팅하는 방법으로, 연속적인 확률 변수의 확률 밀도 함수를 추정한다.</p>
+<pre><code class="language-python">
+</code></pre>
+<h3 id="jointplot">jointplot()</h3>
+<p>두 변수 간의 이변량(또는 결합된) 관계와 각각의 단변량(또는 한계적) 분포를 별도의 축에서 보여주는 멀티 패널 그림을 생성한다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># (10) jointplots(fares by ages, -outliers)</span>
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, data=new_df_titanic)
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>, data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/6c9687a1-c062-40f9-a542-2431e28e0106/image.png" alt="">
+<img src="https://velog.velcdn.com/images/kms39273/post/dff5e9f5-978d-442c-badc-08a53aef8177/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (10) jointplots(fares by ages, -outliers)</span>
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, kind=<span class="hljs-string">&#x27;hex&#x27;</span>,data=new_df_titanic)
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, kind=<span class="hljs-string">&#x27;reg&#x27;</span>,data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/3491315d-d00b-4871-91a1-4d585eefabf4/image.png" alt="">
+<img src="https://velog.velcdn.com/images/kms39273/post/8e9a7c1a-7f77-4b36-ac8d-117c33992ab7/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (10) jointplots(fares by ages, -outliers)</span>
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>, kind=<span class="hljs-string">&#x27;hist&#x27;</span>,data=new_df_titanic)
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>, kind=<span class="hljs-string">&#x27;kde&#x27;</span>,data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/a85b6a05-fea1-4b07-9991-88f4ccd46816/image.png" alt="">
+<img src="https://velog.velcdn.com/images/kms39273/post/9c5d1cb4-930c-4cf6-b2e1-7a531816b285/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (10) jointplots(fares by ages, -outliers)</span>
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;who&#x27;</span>, kind=<span class="hljs-string">&#x27;kde&#x27;</span>,data=new_df_titanic)
+sns.jointplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;class&#x27;</span>, kind=<span class="hljs-string">&#x27;kde&#x27;</span>,data=new_df_titanic)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/117d7768-adf6-44f1-8b0b-117749ffde29/image.png" alt="">
+<img src="https://velog.velcdn.com/images/kms39273/post/67c5e610-3fac-421a-abdb-ee098b194373/image.png" alt=""></p>
+<h2 id="matrix-plots">Matrix Plots</h2>
+<p>매트릭스 플롯은 데이터를 색상 인코딩된 행렬로 플로팅하고, 여러 변수 간의 관계를 시각화하는데 유용하다.</p>
+<h3 id="heatmap">heatmap()</h3>
+<p>데이터를 색상 인코딩된 행렬로 시각화하여, 변수 간의 상관관계를 보여주거나 혼동 행렬을 표시하는 데 도움이 된다.</p>
+<pre><code class="language-python">
+</code></pre>
+<h3 id="clustermap">clustermap()</h3>
+<p>hierarchical clustering(계층적 클러스터링)을 수행하고 클러스터링된 데이터의 히트맵을 표시하여, 데이터 구조에 대한 인사이트를 제공한다</p>
+<pre><code class="language-python">
+</code></pre>
+<h2 id="regression-plots">Regression Plots</h2>
+<p>변수들 사이의 선형 관계를 시각화하는 데 사용된다.</p>
+<h3 id="regplot">regplot()</h3>
+<p>산점도를 그리고 그 위에 선형 회귀 모델을 그린다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># (9) reglot&amp; lmplot</span>
+sns.regplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, data=new_df_titanic)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/0f23eea8-3016-4bb6-ae8b-1bbd3d071db8/image.png" alt=""></p>
+<h3 id="lmplot">lmplot()</h3>
+<p>regplot()과 FacetGrid를 결합한 figure-level 함수로, 데이터셋의 다양한 하위 집합에 걸쳐 선형 회귀 모델을 플로팅할 수 있게 해준다.</p>
+<pre><code class="language-python">sns.lmplot(x=<span class="hljs-string">&#x27;age&#x27;</span>, y=<span class="hljs-string">&#x27;fare&#x27;</span>, hue=<span class="hljs-string">&#x27;sex&#x27;</span>,data=new_df_titanic)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/f8fd472d-b6e3-4888-a6fb-b85ac3af94c4/image.png" alt=""></p>
+<h2 id="multi-plot-grids">Multi-Plot Grids</h2>
+<p>Seaborn은 데이터의 다양한 하위 집합을 비교하는 데 유용한 여러 개의 서브플롯을 포함한 그림을 생성하는 함수를 제공한다.</p>
+<h3 id="pairplot">pairplot()</h3>
+<p>데이터셋 내의 쌍대 관계를 플로팅한다. 기본적으로 이 함수는 데이터 내의 각 변수가 단일 행에 걸쳐 y축에, 단일 열에 걸쳐 x축에 공유되도록 축 그리드를 생성한다.</p>
+<pre><code class="language-python"><span class="hljs-comment"># (11) pairplots</span>
+sns.pairplot(new_df_titanic,
+x_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>,<span class="hljs-string">&#x27;class&#x27;</span>,<span class="hljs-string">&#x27;who&#x27;</span>,<span class="hljs-string">&#x27;sex&#x27;</span>],
+y_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>,<span class="hljs-string">&#x27;class&#x27;</span>,<span class="hljs-string">&#x27;who&#x27;</span>,<span class="hljs-string">&#x27;sex&#x27;</span>],
+kind=<span class="hljs-string">&#x27;scatter&#x27;</span>,
+height=<span class="hljs-number">1.5</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/c8b18ca7-d81d-4670-94be-88cb28a4d11c/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (11) pairplots</span>
+sns.pairplot(new_df_titanic,
+x_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+y_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+kind=<span class="hljs-string">&#x27;scatter&#x27;</span>,
+hue=<span class="hljs-string">&#x27;sex&#x27;</span>,
+height=<span class="hljs-number">1.5</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/a8f4d93f-1b64-45fb-8e2b-03931e9655f3/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (11) pairplots</span>
+sns.pairplot(new_df_titanic,
+x_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+y_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+kind=<span class="hljs-string">&#x27;hist&#x27;</span>,
+hue=<span class="hljs-string">&#x27;sex&#x27;</span>,
+height=<span class="hljs-number">1.5</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/7e8e3a02-f1ea-49d9-bceb-69da130a45f7/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (11) pairplots</span>
+sns.pairplot(new_df_titanic,
+x_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+y_vars=[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>],
+kind=<span class="hljs-string">&#x27;kde&#x27;</span>,
+hue=<span class="hljs-string">&#x27;class&#x27;</span>,
+height=<span class="hljs-number">1.5</span>)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/e9cbb738-e44a-4562-8615-e5d651e83785/image.png" alt=""></p>
+<h3 id="facetgrid-pairgrid-jointgrid">FacetGrid, PairGrid, JointGrid</h3>
+<p>이들은 다른 변수들에 대한 조건을 기반으로 다중 플롯 그리드를 생성할 수 있는 클래스이다. PairGrid는 PairPlot의 불편함을 해소하기 위해 만들어졌으며, 가장 큰 차이점은 각 시각화 도구를 대각선의 상단과 하단에 적용할 수 있다는 것이다.</p>
+<ul>
+<li>(pairplot, pairgrid 비교 사진)</li>
+</ul>
+<pre><code class="language-python"><span class="hljs-comment"># (12) pairgrid()</span>
+grid = sns.PairGrid(new_df_titanic[[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>]])
+grid.map_diag(sns.histplot)
+grid.map_lower(sns.kdeplot)
+grid.map_upper(sns.scatterplot)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/ed18b14b-73e5-4b1e-af9f-c26b0dadadb6/image.png" alt=""></p>
+<pre><code class="language-python"><span class="hljs-comment"># (12) pairgrid()</span>
+grid = sns.PairGrid(new_df_titanic[[<span class="hljs-string">&#x27;survived&#x27;</span>,<span class="hljs-string">&#x27;age&#x27;</span>,<span class="hljs-string">&#x27;fare&#x27;</span>,<span class="hljs-string">&#x27;sex&#x27;</span>]],hue=<span class="hljs-string">&#x27;sex&#x27;</span>)
+grid.map_diag(sns.histplot)
+grid.map_lower(sns.kdeplot)
+grid.map_upper(sns.scatterplot)
+plt.show()
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/5c411de4-3adc-42d1-af29-53d69fbd8e21/image.png" alt=""></p>
+<pre><code></code></pre>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

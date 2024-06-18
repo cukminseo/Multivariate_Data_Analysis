@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#xc774;&#xd56d; &#xbd84;&#xd3ec;&lpar;Binomial Distribution&rpar;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h2 id="이항-분포binomial-distribution">이항 분포(Binomial Distribution)</h2>
+<ul>
+<li>
+<p>저번 게시물에 정리했던 이항분포를 통해 문제를 계산해보자</p>
+</li>
+<li>
+<p>eg. 어떤 선거에서 표본집단 100명의 투표자들에게 53%의 지지를 얻었다면, 당선될것인가?
+분산 = 0.53*0.47=0.2491
+표준편차 = sqrt(0.2491) = 0.4991
+standard_error = 0.4991/sqrt(100)=0.0499(약 5%)
+당선확률을 53%+-5%정도로 볼 수 있다.</p>
+</li>
+<li>
+<p>위에 예시는 <code>표본집단의 확률과 시행횟수</code>를 통해 <code>모집단의 평균을 추정</code>했다.
+<img src="https://velog.velcdn.com/images/kms39273/post/3d81fea4-017a-430d-ba73-911d61ccd48b/image.png" alt="">
+만약 95%의 신뢰구간을 얻고싶다면, 당선확률을 53%+-10%정도로 볼 수 있다.</p>
+</li>
+</ul>
+<h2 id="부트스트랩bootstrap">부트스트랩(Bootstrap)</h2>
+<h3 id="부트스트랩-정의">부트스트랩 정의</h3>
+<p>재표집(resampling)을 통해 통계적 추정치의 분포를 추정하는 방법이다.
+재표집(Resampling): 기존의 표본 데이터 세트에서 복원 추출 방식을 사용하여, 원래 표본과 같은 크기의 새로운 표본을 여러 번 생성합니다. 복원 추출이란 한 번 선택된 데이터를 다시 선택할 수 있도록 다시 표본집단에 반환하는 방식이다.
+통계량 계산: 각각의 재표집된 표본에 대해 원하는 통계량(평균, 분산 등)을 계산한다.
+분포 추정: 계산된 통계량들의 분포를 사용하여 모집단의 해당 통계량에 대한 추정치를 도출한다. 이 분포로부터 신뢰 구간이나 기타 통계적 결론을 도출할 수 있다.</p>
+<h3 id="부트스트랩의-사용">부트스트랩의 사용</h3>
+<p>부트스트랩은 모집단의 실제 분포에 대한 가정이 필요 없기 때문에, 다양한 통계적 상황에서 유용하게 사용된다. 특히 표본 크기가 작거나, 복잡한 통계 모델에서 모수의 신뢰 구간을 추정할 때 효과적이다.</p>
+<h3 id="왜-부트스트랩이-유효한가">왜 부트스트랩이 유효한가?</h3>
+<p>부트스트랩은 원래의 표본이 모집단을 잘 대표한다는 가정 하에 작동한다. 복원 추출 방식으로 '새로운' 표본을 만들어내며, 이론적으로는 이 표본들이 모집단에서 추출될 수 있었을 것이라고 가정한다. 이를 통해, 실제 모집단을 사용하지 않고도 통계량의 샘플링 분포를 추정할 수 있다. 이는 모집단에 대한 강한 가정 없이도 통계적 추론을 가능하게 한다.</p>
+<h3 id="부트스트랩의-장점">부트스트랩의 장점</h3>
+<ul>
+<li>유연성(Flexibility)
+다양한 통계량과 복잡한 추정기에 적용할 수 있다.</li>
+<li>단순성(Simplicity)
+복잡한 수학적 공식을 필요로 하지 않으면서도 쉽게 구현하고 이해할 수 있다.</li>
+<li>적용성(Applicability)
+전통적인 매개변수적 방법을 사용하기 어려운 경우(예: 표본 크기가 너무 작거나 모집단의 분포가 알려지지 않은 경우)에 유용하다.</li>
+</ul>
+<h3 id="부트스트랩의-한계">부트스트랩의 한계</h3>
+<ul>
+<li>정확성(Accuracy)
+원래 표본이 모집단을 대표하지 않는 경우 부트스트랩 추정의 정확성이 떨어질 수 있다. 즉, 표본이 편향되어 있거나 모집단의 특성을 제대로 반영하지 못하면 부트스트랩 결과도 오류를 포함할 가능성이 커진다.</li>
+<li>계산 강도(Computationally Intensive)
+부트스트랩은 많은 계산을 요구하며, 표본 크기나 부트스트랩 샘플의 수가 증가할수록 계산 부담이 커진다. 따라서 컴퓨터 자원을 많이 소모할 수 있다.</li>
+</ul>
+<h3 id="응용-예시">응용 예시</h3>
+<ul>
+<li>부트스트랩을 사용하여 평균 키 차이를 분석하거나, 특정 그룹(커피를 마시는 사람들과 마시지 않는 사람들) 사이의 평균 키 차이를 분석한다.</li>
+</ul>
+<h2 id="데이터-분석-실습">데이터 분석 실습</h2>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+np.random.seed(<span class="hljs-number">104</span>)
+df = pd.read_csv(<span class="hljs-string">&#x27;data/MDA_09_coffee_dataset.csv&#x27;</span>)
+<span class="hljs-built_in">print</span>(df.info())
+<span class="hljs-built_in">print</span>(df.head(<span class="hljs-number">5</span>))
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment"># Randomly sample 200 samples from the population.</span>
+df_sample = df.sample(<span class="hljs-number">200</span>)
+<span class="hljs-built_in">print</span>(df_sample.info())
+<span class="hljs-built_in">print</span>(df_sample.head())
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment">##### Confidence interval using bootstrap #####</span>
+<span class="hljs-comment"># Let&#x27;s repeat the bootstrap 10,000 times to find the 99.7% confidence interval for the height difference</span>
+<span class="hljs-comment"># between people who do not drink coffee and people who drink coffee.</span>
+<span class="hljs-comment"># 1. Average height difference between non-coffee drinkers and coffee drinkers</span>
+iterationNum = <span class="hljs-number">10000</span>
+diffHeightList = []
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(iterationNum):
+    bootSample = df_sample.sample(<span class="hljs-number">200</span>, replace=<span class="hljs-literal">True</span>) <span class="hljs-comment"># 복원 추출(뺀게 사라지지 않음)</span>
+    nonCoffeeHeightMean = bootSample[bootSample[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">False</span>].height.mean()
+    <span class="hljs-comment"># Avg. height of people who drink coffee</span>
+    coffeeHeightMean = bootSample[bootSample[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">True</span>].height.mean()
+    diff = nonCoffeeHeightMean - coffeeHeightMean
+    diffHeightList.append(diff)
+<span class="hljs-built_in">print</span>(diffHeightList)
+</code></pre>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;mean of height diff:&quot;</span>, np.mean(diffHeightList))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;SE of Height diff:&quot;</span>, np.std(diffHeightList))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lowerbound(0.3):&quot;</span>, np.percentile(diffHeightList, <span class="hljs-number">0.3</span>))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Uppperbound(99.7):&quot;</span>, np.percentile(diffHeightList, <span class="hljs-number">99.7</span>))
+</code></pre>
+<p>실제 모집단이 잘 모사되었는지 확인</p>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;##### Height differences in the population #####&quot;</span>)
+<span class="hljs-comment"># # 1. Average height difference between non-coffee drinkers and coffee drinkers</span>
+diffHeight = df[df[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">False</span>].height.mean() - df[df[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">True</span>].height.mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;diffHeight : &quot;</span>,diffHeight)
+</code></pre>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lowerbound(0.3):&quot;</span>, np.percentile(diffHeightList, <span class="hljs-number">0.3</span>))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Uppperbound(99.7):&quot;</span>, np.percentile(diffHeightList, <span class="hljs-number">99.7</span>))
+</code></pre>
+<blockquote>
+<p>커피를 많이 마신 집단이 키가 더 큰게 과연 타당한가?</p>
+</blockquote>
+<h2 id="심슨의-역설simpsons-paradox">심슨의 역설(Simpson's Paradox)</h2>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/4a193be1-9d9e-4ef7-9cfb-14d1784b7572/image.png" alt=""></p>
+<ul>
+<li>심슨의 역설 정의: 복수의 그룹에 걸쳐 데이터를 분석할 때 보이는 경향성이 전체 데이터를 합쳤을 때와 달라지는 현상이다.</li>
+<li>예시: 특정 직업군(예: IT와 교육 분야)에서 성별에 따른 취업률을 분석할 때, 각각의 직업군에서 보이는 성별 취업률 차이가 전체를 합쳤을 때와는 다르게 나타날 수 있다.</li>
+</ul>
+<h3 id="코드-확인">코드 확인</h3>
+<pre><code class="language-python"><span class="hljs-comment"># 2. Average height difference between people over 21 years old and under 21 years old</span>
+diffHeightListByAge = []
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(iterationNum):
+    bootSample = df_sample.sample(<span class="hljs-number">200</span>, replace=<span class="hljs-literal">True</span>) <span class="hljs-comment"># sampling with replacement</span>
+    over21HeightMean = bootSample[bootSample[<span class="hljs-string">&#x27;age&#x27;</span>] == <span class="hljs-string">&#x27;&gt;=21&#x27;</span>].height.mean() <span class="hljs-comment"># Avg.Height for over 21</span>
+    under21HeightMean = bootSample[bootSample[<span class="hljs-string">&#x27;age&#x27;</span>] == <span class="hljs-string">&#x27;&lt;21&#x27;</span>].height.mean() <span class="hljs-comment"># Avg.Height for under 21</span>
+    diff = over21HeightMean - under21HeightMean
+    diffHeightListByAge.append(diff)
+<span class="hljs-comment"># When the confidence level is 99%.7, the confidence interval for the average height difference</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lowerbound(0.3):&quot;</span>, np.percentile(diffHeightListByAge, <span class="hljs-number">0.3</span>))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Uppperbound(99.7):&quot;</span>, np.percentile(diffHeightListByAge, <span class="hljs-number">99.7</span>))
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment"># 3. Average height difference between non-coffee drinkers and coffee drinkers among people under 21 years of age</span>
+diffHeightListUnder21 = []
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(iterationNum):
+    bootSample = df_sample.sample(<span class="hljs-number">200</span>, replace=<span class="hljs-literal">True</span>) <span class="hljs-comment"># sampling with replacement</span>
+    <span class="hljs-comment"># Average height of people under 21 years of age who do not drink coffee</span>
+    nonCoffeeHeightMeanUnder21 = bootSample.query(<span class="hljs-string">&quot;age == &#x27;&lt;21&#x27; and drinks_coffee == False&quot;</span>).height.mean()
+    <span class="hljs-comment"># Average height of people under 21 years of age who drink coffee</span>
+    coffeeHeightMeanUnder21 = bootSample.query(<span class="hljs-string">&quot;age == &#x27;&lt;21&#x27; and drinks_coffee == True&quot;</span>).height.mean()
+    diff = nonCoffeeHeightMeanUnder21 - coffeeHeightMeanUnder21
+    diffHeightListUnder21.append(diff)
+<span class="hljs-comment"># When the confidence level is 99%.7, the confidence interval for the average height difference</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lowerbound(0.3):&quot;</span>, np.percentile(diffHeightListUnder21, <span class="hljs-number">0.3</span>))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Uppperbound(99.7):&quot;</span>, np.percentile(diffHeightListUnder21, <span class="hljs-number">99.7</span>))
+</code></pre>
+<pre><code class="language-python"><span class="hljs-comment"># 4. # Average height difference between non-coffee drinkers and coffee drinkers among people over 21 years of age</span>
+diffHeightListOver21 = []
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(iterationNum):
+    bootSample = df_sample.sample(<span class="hljs-number">200</span>, replace=<span class="hljs-literal">True</span>) <span class="hljs-comment"># sampling with replacement</span>
+    <span class="hljs-comment"># Average height of people over 21 years of age who do not drink coffee</span>
+    nonCoffeeHeightMeanOver21 = bootSample.query(<span class="hljs-string">&quot;age != &#x27;&lt;21&#x27; and drinks_coffee == False&quot;</span>).height.mean()
+    <span class="hljs-comment"># Average height of people over 21 years of age who drink coffee</span>
+    coffeeHeightMeanOver21 = bootSample.query(<span class="hljs-string">&quot;age != &#x27;&lt;21&#x27; and drinks_coffee == True&quot;</span>).height.mean()
+    diff = nonCoffeeHeightMeanOver21 - coffeeHeightMeanOver21
+    diffHeightListOver21.append(diff)
+<span class="hljs-comment"># When the confidence level is 99%.7, the confidence interval for the average height difference</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lowerbound(0.3):&quot;</span>, np.percentile(diffHeightListOver21, <span class="hljs-number">0.3</span>))
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Uppperbound(99.7):&quot;</span>, np.percentile(diffHeightListOver21, <span class="hljs-number">99.7</span>))
+</code></pre>
+<p>-&gt;커피를 마신 그룹의 키가 더 컸지만, 21세 이상과 이하로 나누어봤을떄 두 집단 모두 커피를 안마신 그룹의 키가 더 큼을 확인할 수 있다.(심슨의 역설)</p>
+<pre><code class="language-python"><span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;##### Height differences in the population #####&quot;</span>)
+<span class="hljs-comment"># # 1. Average height difference between non-coffee drinkers and coffee drinkers</span>
+diffHeight = df[df[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">False</span>].height.mean() - df[df[<span class="hljs-string">&#x27;drinks_coffee&#x27;</span>] == <span class="hljs-literal">True</span>].height.mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;1. diffHeight : &quot;</span>,diffHeight)
+<span class="hljs-comment"># 2. Average height difference between people over 21 years old and under 21 years old</span>
+diffHeightByAge = df[df[<span class="hljs-string">&#x27;age&#x27;</span>] == <span class="hljs-string">&#x27;&gt;=21&#x27;</span>].height.mean() - df[df[<span class="hljs-string">&#x27;age&#x27;</span>] == <span class="hljs-string">&#x27;&lt;21&#x27;</span>].height.mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;2. diffHeight : &quot;</span>,diffHeightByAge)
+<span class="hljs-comment"># 3. Average height difference between non-coffee drinkers and coffee drinkers among people under 21 years of age</span>
+diffHeightUnder21 = df.query(<span class="hljs-string">&quot;age == &#x27;&lt;21&#x27; and drinks_coffee == False&quot;</span>).height.mean() - df.query(<span class="hljs-string">&quot;age == &#x27;&lt;21&#x27; and drinks_coffee == True&quot;</span>).height.mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;3. diffHeight : &quot;</span>,diffHeightUnder21)
+<span class="hljs-comment"># 4. Average height difference between non-coffee drinkers and coffee drinkers among people over 21 years of age</span>
+diffHeightOver21 = df.query(<span class="hljs-string">&quot;age != &#x27;&lt;21&#x27; and drinks_coffee == False&quot;</span>).height.mean() - df.query(<span class="hljs-string">&quot;age != &#x27;&lt;21&#x27; and drinks_coffee == True&quot;</span>).height.mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;4. diffHeight : &quot;</span>,diffHeightOver21)
+</code></pre>
+<p><img src="https://velog.velcdn.com/images/kms39273/post/1cf1f175-dd98-44af-9f4f-a12fcb9de9ba/image.png" alt=""></p>
+
+            
+            
+        </body>
+        </html>
